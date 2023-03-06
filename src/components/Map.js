@@ -1,42 +1,39 @@
-import React from 'react';
-import { MapContainer, TileLayer } from 'react-leaflet';
-import { bbox, bboxPolygon } from '@turf/turf';
-import { Card , Row , Col} from 'antd';
-import * as L from 'leaflet';
+import React, { useEffect, useRef, useState } from 'react';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import { Card, Row, Col } from 'antd';
+import { useSelector } from 'react-redux';
 
-
+const countryCoordinates = {
+  'India': [20.5937, 78.9629],
+  'United States': [37.0902, -95.7129],
+  'United Kingdom': [55.3781, -3.436],
+};
 
 const Map = () => {
-  // Define the initial map position and zoom level
-  const position = [51.505, -0.09];
-  const zoom = 13;
+  const mapRef = useRef();
+  const countryName = useSelector((store) => store.formdata.items);
+  const [url, setUrl] = useState(`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`);
 
-  // Create a reference to the Leaflet map instance
-  const mapRef = React.useRef();
+ useEffect(() => {
+  if (countryCoordinates[countryName]) {
+    const newPosition = countryCoordinates[countryName];
+    mapRef.current.flyTo(newPosition, 4);
+    setUrl(`https://{s}.tile.openstreetmap.org/{z}/${newPosition[0]}/${newPosition[1]}.png`);
+  }
+}, [countryName]);
 
-  // Define a function that will be called when the map is created
-   const handleMapCreate = (map) => {
-    // Save a reference to the Leaflet map instance
-    mapRef.current = map;
 
-    // Define the bounding box of the map
-    const bounds = map.getBounds();
-
-    // Create a bounding box polygon using Turf.js
-    const bboxPoly = bboxPolygon(bbox(bounds));
-
-    // Add the bounding box polygon to the map as a GeoJSON layer
-    L.geoJSON(bboxPoly).addTo(map);
-  };
+  const position = [20.5937, 78.9629];
 
   return (
-    <Row gutter={[16, 16]} style={{overflow:'hidden', margin:'5px',}}>
+    <Row gutter={[16, 16]} style={{ overflow: 'hidden', margin: '5px' }}>
       <Col xs={24} sm={24} md={18} lg={18} xl={18}>
-       <MapContainer center={position} zoom={zoom} style={{ height: 'calc(100vh - 128px)', width: '100%' }} whenCreated={handleMapCreate}>
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <MapContainer center={position} zoom={4} scrollWheelZoom={false} dragging={false} zoomControl={false}>
+          <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a> contributors'
+            url={url} />
+          <Marker position={position} />
         </MapContainer>
       </Col>
-     
     </Row>
   );
 };

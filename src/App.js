@@ -1,10 +1,13 @@
 import OsmMap from './components/OsmMap';
 import MainFooter from './components/MainFooter';
 import HeaderSec from './components/Headersec';
- 
+import store from './utlis/Store' 
+
 import { FileOutlined, PieChartOutlined, UserOutlined, DesktopOutlined , TeamOutlined} from '@ant-design/icons';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import { useState } from 'react';
+
+import { Provider } from 'react-redux';
 
 const {  Content, Footer, Sider } = Layout;
 
@@ -35,6 +38,7 @@ const App = () => {
     token: { colorBgContainer },
   } = theme.useToken();
   return (
+    <Provider store= {store}> 
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div style={{ height: 32, margin: 16, background: 'rgba(255, 255, 255, 0.2)' }} />
@@ -52,6 +56,7 @@ const App = () => {
         </Footer>
       </Layout>
     </Layout>
+    </Provider> 
   );
 };
 

@@ -1,89 +1,31 @@
-import React from 'react';
-import { Button, Form, Input, Select } from 'antd';
-const { Option } = Select;
-const layout = {
-  labelCol: {
-    span: 8,
-  },
-  wrapperCol: {
-    span: 16,
-  },
-};
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16,
-  },
-};
-const FormInput = function(){
-  const [form] = Form.useForm();
-  const onCountryChange = (value) => {
-    switch (value) {
-      case 'India':
-        form.setFieldsValue({
-          note: 'Hi, man!',
-        });
-        break;
-        
-      case 'United States':
-        form.setFieldsValue({
-          note: 'Hi, lady!',
-        });
-        break;
-      case 'United Kingdom':
-        form.setFieldsValue({
-          note: 'Hi there!',
-        });
-        break;
-      default:
-    }
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { formload } from "../utlis/formdataSlice";
+
+function Form() {
+  const [selectedOption, setSelectedOption] = useState("India");
+  const dispatch = useDispatch();
+
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
   };
-  const onFinish = (values) => {
-    console.log(values);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    dispatch(formload(selectedOption));
   };
- 
- 
+
   return (
-    <Form
-      {...layout}
-      form={form}
-      name="control-hooks"
-      onFinish={onFinish}
-      style={{
-        maxWidth: 250,
-      }}
-    >
-      
-      <Form.Item
-        name="Country"
-        label="Country"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Select
-          placeholder="Select a Country "
-          onChange={onCountryChange}
-          allowClear
-        >
-          <Option value="India">India</Option>
-          <Option value="United States">United States</Option>
-          <Option value="United Kingdom">United Kingdom</Option>
-        </Select>
-      </Form.Item>
-      <Form.Item
-        noStyle
-        shouldUpdate={(prevValues, currentValues) => prevValues.Country !== currentValues.Country}
-      >
-      </Form.Item>
-      <Form.Item {...tailLayout}>
-        <Button type="primary" htmlType="submit">
-          Load
-        </Button>
-      </Form.Item>
-    </Form>
+    <form onSubmit={handleSubmit}>
+      <label htmlFor="country">Select a country:</label>
+      <select id="country" value={selectedOption} onChange={handleOptionChange}>
+        <option value="India">India</option>
+        <option value="United States">United States</option>
+        <option value="United Kingdom">United Kingdom</option>
+      </select>
+      <button type="submit">Submit</button>
+    </form>
   );
-};
-export default FormInput;
+}
+
+export default Form;
